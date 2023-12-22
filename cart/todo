@@ -1,0 +1,5 @@
+part 7 todo
+
+create django app for the cart
+create a cart class
+make cart globally available  throug context_processors

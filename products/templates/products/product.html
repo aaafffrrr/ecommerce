@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}{{product.name}}{% endblock title %}
+{% block content %}
+
+<div class="max-w-6xl mx-auto flex flex-wrap items-start px-6 py-6 xl:px-0">
+    <div class="images w-full mb-6 lg:mb-0 lg:w-3/5">
+        <img src="{% if product.image %}{{product.image.url}}{% else %}https://via.placeholder.com/240x240.jpg{% endif %}" alt="img" class="rounded-xl">
+    </div>
+
+    <div class="information w-full lg:w-2/5 lg:p-6">
+        <h1 class="text-2xl">{{product.name}}</h1>
+        <p class="pt-1 text-gray-400">${{product.get_display_price}}</p>
+        {% if product.get_rating > 0 %}
+            <p class="mt-1 text-gray-400 ">Rating: {{product.get_rating}}/6</p>
+        {% endif %}
+        {% if product.description %}
+        <p class="mt-6 text-gray-700 ">{{product.description}}</p>
+        {% endif %}
+        <a 
+            href="" 
+            class="mt-6 inline-block px-8 py-4 rounded-xl bg-purple-600 text-white hover:bg-purple-700" 
+            hx-get="{% url "add_to_cart" product.id %}" 
+            hx-target = "#menu-cart-btn"
+            hx-swap = "outerHtml"
+        >
+
+            Add to Cart
+        </a>
+
+    </div>
+
+    <div class="reviews w-full mt-6 ">
+        <h2 class="text-xl">Reviews</h2>
+        {% if request.user.is_authenticated %}
+            <form action="." method="POST" class='p-6 bg-gray-100 rounded-xl mt-6'>
+                {% csrf_token %}
+                <div class="">
+                    <label for="">Rating</label>
+                    <select name="rating" id="">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+
+                <div class="">
+                    <label for="">Comments</label><br>
+                    <textarea name="content" id="" class="text-ellipsis" ></textarea>
+
+                </div>
+
+                <div class="btn">
+                    <button type="submit" class="px-6 py-2 rounded-xl bg-purple-500 hover:bg-purple-700 text-white">Submit</button>
+                </div>
+                
+            </form>
+        {% endif %}
+        {% for review in product.reviews.all %}
+        <div class="px-4 py-6 bg-white rounded-xl mb-4">
+            <p class="text-rose-500 text-lg">@{{review.created_by}}</p>
+            <strong>Rating: </strong>{{review.ratings}}/6 <br>
+            <strong>Comments: </strong>{{review.content}}<br>
+            <p><strong>On: </strong>{{review.created_at|date:"d-m-Y"}}</p>
+            
+
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock content %}
